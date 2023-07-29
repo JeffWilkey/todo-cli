@@ -1,13 +1,17 @@
 package main_test
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
+	"strconv"
 	"testing"
+
+	"github.com/jeffwilkey/todo-cli"
 )
 
 var (
@@ -52,15 +56,35 @@ func TestTodoCLI(t *testing.T) {
 	cmdPath := filepath.Join(dir, binName)
 
 	t.Run("AddNewTask", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, strings.Split(task, " ")...)
+		cmd := exec.Command(cmdPath, "-task", task)
 
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
 		}
 	})
 
+	t.Run("CompleteTask", func(t *testing.T) {
+		l := todo.List{}
+
+		file, err := os.ReadFile(fileName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(file) == 0 {
+			t.Fatal(errors.New("file has no length"))
+		}
+
+		json.Unmarshal(file, &l)
+
+		cmd := exec.Command(cmdPath, "-complete", strconv.Itoa(len(l)))
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+	})
+
 	t.Run("ListTasks", func(t *testing.T) {
-		cmd := exec.Command(cmdPath)
+		cmd := exec.Command(cmdPath, "-list")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			t.Fatal(err)
