@@ -34,8 +34,10 @@ func TestMain(m *testing.M) {
 
 	fmt.Println("Cleaning up...")
 	os.Remove(binName)
-	os.Remove(fileName)
-
+	err := os.Remove(fileName)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Cannot clean up %s: %s", fileName, err)
+	}
 	os.Exit(result)
 }
 
