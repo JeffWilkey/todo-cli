@@ -8,8 +8,8 @@ import (
 	"github.com/jeffwilkey/todo-cli"
 )
 
-// Hardcode file name
-const todoFileName = ".todo.json"
+// Default file name
+var todoFileName = ".todo.json"
 
 func main() {
 	// Parsing command line flags
@@ -18,6 +18,11 @@ func main() {
 	complete := flag.Int("complete", 0, "Item to be completed")
 
 	flag.Parse()
+
+	// Check if the user defined the environment variable for a custom file name
+	if os.Getenv("TODO_FILENAME") != "" {
+		todoFileName = os.Getenv("TODO_FILENAME")
+	}
 
 	// Define an items list
 	l := &todo.List{}
