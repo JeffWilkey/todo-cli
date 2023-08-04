@@ -32,9 +32,7 @@ func main() {
 	switch {
 	// For no arguments, print the list
 	case *list:
-		for _, item := range *l {
-			fmt.Println(item.Task)
-		}
+		fmt.Print(l)
 	case *complete > 0:
 		// Complete the given item
 		if err := l.Complete(*complete); err != nil {

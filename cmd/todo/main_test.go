@@ -63,6 +63,20 @@ func TestTodoCLI(t *testing.T) {
 		}
 	})
 
+	t.Run("ListTasks", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-list")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expected := fmt.Sprintf("[ ] 1: %s\n", task)
+
+		if expected != string(out) {
+			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
+		}
+	})
+
 	t.Run("CompleteTask", func(t *testing.T) {
 		l := todo.List{}
 
@@ -81,16 +95,14 @@ func TestTodoCLI(t *testing.T) {
 		if err := cmd.Run(); err != nil {
 			t.Fatal(err)
 		}
-	})
 
-	t.Run("ListTasks", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, "-list")
+		cmd = exec.Command(cmdPath, "-list")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		expected := fmt.Sprintf("%s\n", task)
+		expected := fmt.Sprintf("[X] 1: %s\n", task)
 
 		if expected != string(out) {
 			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
