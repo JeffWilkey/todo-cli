@@ -124,4 +124,36 @@ func TestTodoCLI(t *testing.T) {
 			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
 		}
 	})
+
+	t.Run("DeleteTask", func(t *testing.T) {
+		l := todo.List{}
+
+		file, err := os.ReadFile(fileName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if len(file) == 0 {
+			t.Fatal(errors.New("file has no length"))
+		}
+
+		json.Unmarshal(file, &l)
+
+		cmd := exec.Command(cmdPath, "-del", strconv.Itoa(len(l)))
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+
+		cmd = exec.Command(cmdPath, "-list")
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expected := fmt.Sprintf("[ ] 1: %s\n", task)
+
+		if expected != string(out) {
+			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
+		}
+	})
 }
